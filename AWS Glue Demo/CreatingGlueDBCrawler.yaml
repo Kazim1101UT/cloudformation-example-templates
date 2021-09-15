@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create Glue DB and Crawler with schedular to run every min through MON-FIR to check new changes.
+Resources:
+  DemoGlueDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: "demodbcrawler"
+        Description: "TestDatabaseDescription"
+        LocationUri: "DemoDB"
+        Parameters:
+          key1 : "value1"
+          key2 : "value2"
+
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: "sid-city-data-ak"
+      AccessControl: "BucketOwnerFullControl"
+  
+  MyCSVclassifier:
+    Type: 'AWS::Glue::Classifier'
+    Properties:
+      CsvClassifier:
+        AllowSingleColumn: true
+        ContainsHeader: PRESENT
+        Delimiter: ','
+        Name: csvclassify
+        QuoteSymbol: '"'
+
+  MyCrawler2:
+    Type: AWS::Glue::Crawler
+    Properties:
+      Name: "glueCrawlerDemo"
+      Role: !ImportValue GLueCrawlerRoleArn
+      DatabaseName: !Ref DemoGlueDatabase
+      Classifiers:
+        - !Ref MyCSVclassifier
+      Targets:
+        S3Targets:
+          - Path: !Ref MyS3Bucket
+      SchemaChangePolicy:
+        UpdateBehavior: "UPDATE_IN_DATABASE"
+        DeleteBehavior: "LOG"
+      Schedule:
+        ScheduleExpression: "cron(0/1 * ? * MON-FRI *)"

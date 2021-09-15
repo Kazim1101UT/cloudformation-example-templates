@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creating role for Glue DB and return the ARN for role
+Resources:
+  GlueDemoRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: GlueDemoRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "glue.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        -
+          PolicyName: "AmazonS3FullAccess"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action: "*"
+                Resource: "*"
+        -
+          PolicyName: "AWSGlueServiceRole"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action: "*"
+                Resource: "*"
+Outputs:
+  DemoGlueCrawlerRolekKey:
+    Description: The ARN of GlueDemoRole
+    Value: !GetAtt GlueDemoRole.Arn
+    Export:
+      Name: GLueCrawlerRoleArn
+ 
