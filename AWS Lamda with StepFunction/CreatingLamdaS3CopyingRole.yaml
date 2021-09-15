@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creating role to run the lamda fuction to copy files from S3 to another S3.
+Resources:
+  StepLamdaS3CopyingRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: LamdaS3CopyingRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17' 
+        Statement:
+          - 
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: AWSLambdaRole
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: '*'
+                Resource: '*'
+
+  StatesExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - !Sub states.${AWS::Region}.amazonaws.com
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: StatesExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+
+Outputs:
+  StackLamdaS3CopyingRole:
+    Description: The ARN of StepLamdaS3CopyingRole
+    Value: !GetAtt StepLamdaS3CopyingRole.Arn
+    Export:
+      Name: StepLamdaS3CopyingRole
+
+  StackStatesExecutionRole:
+    Description: The ARN of StatesExecutionRole
+    Value: !GetAtt StatesExecutionRole.Arn
+    Export:
+      Name: StatesExecutionRole

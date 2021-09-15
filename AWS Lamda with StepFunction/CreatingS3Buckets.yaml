@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creating s3 buckets and lamda fuction to copy the files.
+Resources:
+  DemoS3BucketIN:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: ut-input-data
+      
+  DemoS3BucketOUT:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: ut-output-data
+
+  DemoS3SourceCode:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: kazim-temp-bucket
