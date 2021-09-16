@@ -21,7 +21,7 @@ Resources:
         !Sub
           - |-
             {
-              "Comment": "A Hello World example using an AWS Lambda function",
+              "Comment": "Example using an AWS Lambda function",
               "StartAt": "LamdaCopyFunctionStep",
               "States": {
                 "LamdaCopyFunctionStep": {
